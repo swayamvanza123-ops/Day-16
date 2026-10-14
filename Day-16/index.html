@@ -1,0 +1,238 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockWise | Inventory Dashboard</title>
+    <link rel="stylesheet" href="./css/style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="module" src="./js/main.js"></script>
+</head>
+<body>
+
+<div class="layout">
+
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-logo">📦</div>
+            <div>
+                <h2>StockWise</h2>
+                <p>Inventory Manager</p>
+            </div>
+        </div>
+
+        <nav>
+            <a class="active" href="#dashboard">▦ Dashboard</a>
+            <a href="#products-section">▣ Products</a>
+            <a href="#alerts-section">⚠ Low Stock Alerts</a>
+            <a href="#chart-section">▥ Inventory Chart</a>
+            <a href="#form-section">＋ Add Product</a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <span>● System Active</span>
+            <p>Manage your inventory easily.</p>
+        </div>
+    </aside>
+
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">INVENTORY MANAGEMENT</p>
+                <h1>Inventory Dashboard</h1>
+                <p class="muted">Monitor products, stock and inventory value.</p>
+            </div>
+            <a href="#form-section" class="add-button">＋ Add Product</a>
+        </header>
+
+        <!-- DASHBOARD CARDS -->
+        <section id="dashboard" class="stats-grid">
+
+            <article class="stat-card purple">
+                <div class="stat-heading">
+                    <span>Total Products</span>
+                    <span class="stat-icon">▣</span>
+                </div>
+                <h2 id="totalProducts">0</h2>
+                <p>Products in inventory</p>
+            </article>
+
+            <article class="stat-card blue">
+                <div class="stat-heading">
+                    <span>Total Stock</span>
+                    <span class="stat-icon">▤</span>
+                </div>
+                <h2 id="totalStock">0</h2>
+                <p>Units available</p>
+            </article>
+
+            <article class="stat-card green">
+                <div class="stat-heading">
+                    <span>Inventory Value</span>
+                    <span class="stat-icon">₹</span>
+                </div>
+                <h2 id="inventoryValue">₹0</h2>
+                <p>Value of current stock</p>
+            </article>
+
+            <article class="stat-card orange">
+                <div class="stat-heading">
+                    <span>Low-Stock Products</span>
+                    <span class="stat-icon">!</span>
+                </div>
+                <h2 id="lowStock">0</h2>
+                <p>Products below 10 units</p>
+            </article>
+
+        </section>
+
+        <!-- LOW STOCK ALERTS -->
+        <section id="alerts-section" class="panel">
+            <div class="section-heading">
+                <div>
+                    <h2>⚠ Low-Stock Alerts</h2>
+                    <p>Products that need restocking</p>
+                </div>
+                <span id="alertCount" class="alert-badge">0 alerts</span>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Stock</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lowStockTable"></tbody>
+                </table>
+            </div>
+
+            <p id="noLowStock" class="success-message" hidden>
+                ✓ All products have sufficient stock.
+            </p>
+        </section>
+
+        <!-- STOCK CHART -->
+        <section id="chart-section" class="panel">
+            <div class="section-heading">
+                <div>
+                    <h2>Inventory Stock Overview</h2>
+                    <p>Compare quantities for every product</p>
+                </div>
+                <span class="chart-badge">Bar Chart</span>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="stockChart"></canvas>
+            </div>
+        </section>
+
+        <!-- ADD / EDIT PRODUCT FORM -->
+        <section id="form-section" class="panel">
+            <div class="section-heading">
+                <div>
+                    <h2 id="formTitle">＋ Add New Product</h2>
+                    <p>Add a product and preview its image</p>
+                </div>
+            </div>
+
+            <form id="productForm" novalidate>
+                <input type="hidden" id="productId">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label for="productName">Product Name</label>
+                        <input id="productName" type="text"
+                               placeholder="Enter product name">
+                        <small id="nameError" class="error"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productCategory">Category</label>
+                        <select id="productCategory">
+                            <option value="">Select category</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Accessories">Accessories</option>
+                            <option value="Furniture">Furniture</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <small id="categoryError" class="error"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productPrice">Price (₹)</label>
+                        <input id="productPrice" type="number"
+                               min="0.01" step="0.01" placeholder="Enter price">
+                        <small id="priceError" class="error"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productStock">Stock Quantity</label>
+                        <input id="productStock" type="number"
+                               min="0" step="1" placeholder="Enter stock">
+                        <small id="stockError" class="error"></small>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="productImage">Product Image Path</label>
+                        <input id="productImage" type="text"
+                               placeholder="images/laptop.jpg">
+                        <small class="hint">
+                            Enter an image path, e.g. images/laptop.jpg
+                        </small>
+
+                        <div id="imagePreview" class="image-preview" hidden>
+                            <img id="previewImage" src="" alt="Product preview">
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" id="submitButton" class="primary-button">
+                        Add Product
+                    </button>
+                    <button type="button" id="cancelEdit"
+                            class="secondary-button" hidden>
+                        Cancel Edit
+                    </button>
+                </div>
+
+                <p id="formMessage" role="status" class="form-message"></p>
+            </form>
+        </section>
+
+        <!-- PRODUCT LIST -->
+        <section id="products-section" class="panel">
+            <div class="section-heading product-heading">
+                <div>
+                    <h2>Product Inventory</h2>
+                    <p>Manage and update your products</p>
+                </div>
+
+                <input id="searchInput" type="search"
+                       class="search-input" placeholder="Search products...">
+            </div>
+
+            <div id="productGrid" class="product-grid"></div>
+
+            <p id="emptyProducts" class="empty-message" hidden>
+                No products found. Add a product to get started.
+            </p>
+        </section>
+
+        <footer class="footer">
+            © 2026 StockWise · Inventory Management System
+        </footer>
+
+    </main>
+</div>
+
+</body>
+</html>
